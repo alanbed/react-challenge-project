@@ -4,10 +4,13 @@ import { SERVER_IP } from '../../private';
 import './viewOrders.css';
 
 const deleteOrderURL = `${SERVER_IP}/api/delete-order`;
+const editOrderURL = `${SERVER_IP}/api/edit-order`;
 
 class ViewOrders extends Component {
   state = {
     orders: [],
+    isModalOpen: false,
+    currentOrder: null,
   };
 
   componentDidMount() {
@@ -27,8 +30,36 @@ class ViewOrders extends Component {
       .catch((err) => console.error(err));
   }
 
+  async submitOrderChange(order) {
+    await fetch(`${editOrderURL}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        id: order._id,
+        order_item: this.state.currentOrder.order_item,
+        quantity: this.state.currentOrder.quantity,
+        ordered_by: this.state.currentOrder.ordered_by,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        this.toggleModal();
+      })
+      .catch((err) => console.error(err));
+  }
+
+  editOrder(order) {
+    this.toggleModal();
+    this.setState({ currentOrder: order });
+  }
+
+  toggleModal() {
+    // open/close your modal
+    this.setState({ isModalOpen: !this.state.isModalOpen });
+  }
+
   async deleteOrder(order) {
-    console.log(order._id);
     await fetch(`${deleteOrderURL}`, {
       method: 'POST',
       body: JSON.stringify({
@@ -75,7 +106,15 @@ class ViewOrders extends Component {
                   <p>Quantity: {order.quantity}</p>
                 </div>
                 <div className='col-md-4 view-order-right-col'>
-                  <button className='btn btn-success'>Edit</button>
+                  <button
+                    type='submit'
+                    data-toggle='modal'
+                    data-target='editCurrentOrder'
+                    onClick={() => this.editOrder(order)}
+                    className='btn btn-success'
+                  >
+                    Edit
+                  </button>
                   <button
                     type='submit'
                     onClick={() => this.deleteOrder(order)}
@@ -83,6 +122,38 @@ class ViewOrders extends Component {
                   >
                     Delete
                   </button>
+                </div>
+                <div className='modal' id='editCurrentOrder' role='dialog'>
+                  <div className='modal-dialog' role='document'>
+                    <div className='modal-content'>
+                      <div className='modal-header'>
+                        <h5 className='modal-title'>Edit Order</h5>
+                        <button
+                          type='button'
+                          className='close'
+                          data-dismiss='modal'
+                          aria-label='Close'
+                        >
+                          <span aria-hidden='true'>&times;</span>
+                        </button>
+                      </div>
+                      <div className='modal-body'>
+                        <p>Modal body text goes here.</p>
+                      </div>
+                      <div className='modal-footer'>
+                        <button type='button' className='btn btn-primary'>
+                          Save changes
+                        </button>
+                        <button
+                          type='button'
+                          className='btn btn-secondary'
+                          data-dismiss='modal'
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             );
