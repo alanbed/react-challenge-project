@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Modal from './modal';
 import { Template } from '../../components';
 import { SERVER_IP } from '../../private';
 import './viewOrders.css';
@@ -9,11 +10,11 @@ const editOrderURL = `${SERVER_IP}/api/edit-order`;
 class ViewOrders extends Component {
   state = {
     orders: [],
-    isModalOpen: false,
-    currentOrder: null,
+    show: false,
+    currentOrder: {},
     newOrderedBy: '',
-    newQuantity: 0,
     newOrderItem: '',
+    newQuantity: 0,
   };
 
   componentDidMount() {
@@ -48,19 +49,33 @@ class ViewOrders extends Component {
     })
       .then((res) => {
         this.toggleModal();
+        this.getCurrentOrders();
       })
       .catch((err) => console.error(err));
   }
+
+  setOrderItem = (e) => {
+    this.setState({ newOrderItem: e.target.value });
+  };
+
+  setQuantity = (e) => {
+    this.setState({ newQuantity: e.target.value });
+  };
+
+  setOrderedBy = (e) => {
+    this.setState({ newOrderedBy: e.target.value });
+  };
 
   editOrder(order) {
     this.toggleModal();
     this.setState({ currentOrder: order });
   }
 
-  toggleModal() {
-    // open/close your modal
-    this.setState({ isModalOpen: !this.state.isModalOpen });
-  }
+  toggleModal = (e) => {
+    this.setState({
+      show: !this.state.show,
+    });
+  };
 
   async deleteOrder(order) {
     await fetch(`${deleteOrderURL}`, {
@@ -108,10 +123,9 @@ class ViewOrders extends Component {
                   </p>
                   <p>Quantity: {order.quantity}</p>
                 </div>
-                <div className='col-md-4 view-order-right-col'>
+                <div className='viewOrder col-md-4 view-order-right-col'>
                   <button
                     type='submit'
-                    id='editCurrentOrder'
                     onClick={() => this.editOrder(order)}
                     className='btn btn-success'
                   >
@@ -125,15 +139,47 @@ class ViewOrders extends Component {
                     Delete
                   </button>
                 </div>
-                <div id='editCurrentOrder' class='modal'>
-                  <div class='modal-content'>
-                    <span class='close'>&times;</span>
-                    <p>Some text in the Modal..</p>
-                  </div>
-                </div>
               </div>
             );
           })}
+          <Modal show={this.state.show} onClose={this.toggleModal}>
+            <select
+              value={this.state.newOrderItem}
+              onChange={this.setOrderItem}
+              className='menu-select'
+            >
+              <option value='' defaultValue disabled hidden>
+                Lunch menu
+              </option>
+              <option value='Soup of the Day'>Soup of the Day</option>
+              <option value='Linguini With White Wine Sauce'>
+                Linguini With White Wine Sauce
+              </option>
+              <option value='Eggplant and Mushroom Panini'>
+                Eggplant and Mushroom Panini
+              </option>
+              <option value='Chili Con Carne'>Chili Con Carne</option>
+            </select>
+            <select value={this.state.newQuantity} onChange={this.setQuantity}>
+              <option value='1'>1</option>
+              <option value='2'>2</option>
+              <option value='3'>3</option>
+              <option value='4'>4</option>
+              <option value='5'>5</option>
+              <option value='6'>6</option>
+            </select>
+            <input
+              onChange={this.setOrderedBy}
+              value={this.state.newOrderedBy}
+            />
+            <button
+              type='submit'
+              classname='btn btn-success'
+              onClick={() => this.submitOrderChange()}
+            >
+              Update
+            </button>
+          </Modal>
         </div>
       </Template>
     );
