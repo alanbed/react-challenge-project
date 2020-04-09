@@ -11,13 +11,15 @@ class Modal extends React.Component {
       return null;
     }
     return (
-      <div className='modalPopup'>
-        <h2>Edit Order</h2>
-        <div className='content'>{this.props.children}</div>
-        <div className='actions'>
-          <button className='toggle-button' onClick={this.onClose}>
-            close
-          </button>
+      <div className='modal-wrapper'>
+        <div className='modalPopup'>
+          <h2>Edit Order</h2>
+          <div className='content'>{this.props.children}</div>
+          <div className='actions'>
+            <button className='toggle-button' onClick={this.onClose}>
+              Close
+            </button>
+          </div>
         </div>
       </div>
     );

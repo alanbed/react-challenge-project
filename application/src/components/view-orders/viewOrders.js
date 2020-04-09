@@ -109,6 +109,42 @@ class ViewOrders extends Component {
   render() {
     return (
       <Template>
+        <Modal show={this.state.show} onClose={this.toggleModal}>
+          <select
+            value={this.state.newOrderItem}
+            onChange={this.setOrderItem}
+            className='menu-select'
+          >
+            <option value='' defaultValue disabled hidden>
+              Lunch menu
+            </option>
+            <option value='Soup of the Day'>Soup of the Day</option>
+            <option value='Linguini With White Wine Sauce'>
+              Linguini With White Wine Sauce
+            </option>
+            <option value='Eggplant and Mushroom Panini'>
+              Eggplant and Mushroom Panini
+            </option>
+            <option value='Chili Con Carne'>Chili Con Carne</option>
+          </select>
+          <select value={this.state.newQuantity} onChange={this.setQuantity}>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+            <option value='6'>6</option>
+          </select>
+
+          <input onChange={this.setOrderedBy} value={this.state.newOrderedBy} />
+          <button
+            type='submit'
+            className='btn btn-info'
+            onClick={() => this.submitOrderChange()}
+          >
+            Update
+          </button>
+        </Modal>
         <div className='container-fluid'>
           {this.state.orders.map((order) => {
             return (
@@ -142,44 +178,6 @@ class ViewOrders extends Component {
               </div>
             );
           })}
-          <Modal show={this.state.show} onClose={this.toggleModal}>
-            <select
-              value={this.state.newOrderItem}
-              onChange={this.setOrderItem}
-              className='menu-select'
-            >
-              <option value='' defaultValue disabled hidden>
-                Lunch menu
-              </option>
-              <option value='Soup of the Day'>Soup of the Day</option>
-              <option value='Linguini With White Wine Sauce'>
-                Linguini With White Wine Sauce
-              </option>
-              <option value='Eggplant and Mushroom Panini'>
-                Eggplant and Mushroom Panini
-              </option>
-              <option value='Chili Con Carne'>Chili Con Carne</option>
-            </select>
-            <select value={this.state.newQuantity} onChange={this.setQuantity}>
-              <option value='1'>1</option>
-              <option value='2'>2</option>
-              <option value='3'>3</option>
-              <option value='4'>4</option>
-              <option value='5'>5</option>
-              <option value='6'>6</option>
-            </select>
-            <input
-              onChange={this.setOrderedBy}
-              value={this.state.newOrderedBy}
-            />
-            <button
-              type='submit'
-              classname='btn btn-success'
-              onClick={() => this.submitOrderChange()}
-            >
-              Update
-            </button>
-          </Modal>
         </div>
       </Template>
     );
